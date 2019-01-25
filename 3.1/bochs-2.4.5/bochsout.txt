@@ -1,0 +1,84 @@
+00000000000i[     ] Bochs x86 Emulator 2.4.5
+00000000000i[     ]   Build from CVS snapshot, on April 25, 2010
+00000000000i[     ] System configuration
+00000000000i[     ]   processors: 1 (cores=1, HT threads=1)
+00000000000i[     ]   A20 line support: yes
+00000000000i[     ]   load configurable MSRs from file "msrs.def"
+00000000000i[     ] CPU configuration
+00000000000i[     ]   level: 6
+00000000000i[     ]   SMP support: no
+00000000000i[     ]   APIC support: yes
+00000000000i[     ]   FPU support: yes
+00000000000i[     ]   MMX support: yes
+00000000000i[     ]   3dnow! support: no
+00000000000i[     ]   SEP support: yes
+00000000000i[     ]   SSE support: sse4_2
+00000000000i[     ]   XSAVE support: yes
+00000000000i[     ]   AES support: yes
+00000000000i[     ]   MOVBE support: yes
+00000000000i[     ]   x86-64 support: no
+00000000000i[     ]   MWAIT support: no
+00000000000i[     ]   VMX support: no
+00000000000i[     ] Optimization configuration
+00000000000i[     ]   RepeatSpeedups support: no
+00000000000i[     ]   Trace cache support: no
+00000000000i[     ]   Fast function calls: no
+00000000000i[     ] Devices configuration
+00000000000i[     ]   ACPI support: no
+00000000000i[     ]   NE2000 support: no
+00000000000i[     ]   PCI support: no, enabled=yes
+00000000000i[     ]   SB16 support: no
+00000000000i[     ]   USB support: no
+00000000000i[     ]   VGA extension support: vbe 
+00000000000i[MEM0 ] allocated memory at 0xa5ece008. after alignment, vector=0xa5ecf000
+00000000000i[MEM0 ] 512.00MB
+00000000000i[MEM0 ] mem block size = 0x00100000, blocks=512
+00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
+00000000000i[MEM0 ] rom at 0xc0000/40448 ('/usr/local/share/bochs/VGABIOS-lgpl-latest')
+00000000000i[CPU0 ] loaded MSR[0x02c] type=0 00000000:00000000 00000000:00000000 00000000:00000000
+00000000000e[DEV  ] Bochs is not compiled with PCI support
+00000000000i[CMOS ] Using local time for initial clock
+00000000000i[CMOS ] Setting initial clock to: Mon Jan 21 00:14:29 2019 (time0=1548000869)
+00000000000i[DMA  ] channel 4 used by cascade
+00000000000i[DMA  ] channel 2 used by Floppy Drive
+00000000000i[FDD  ] tried to open '/dev/fd0' read/write: No such file or directory
+00000000000i[FDD  ] tried to open '/dev/fd0' read only: No such file or directory
+00000000000i[VGA  ] interval=300000
+00000000000i[MEM0 ] Register memory access handlers: 0x000a0000 - 0x000bffff
+00000000000i[XGUI ] test_alloc_colors: 16 colors available out of 16 colors tried
+00000000000i[XGUI ] font 8 wide x 16 high, display depth = 24
+00000000000i[MEM0 ] Register memory access handlers: 0xe0000000 - 0xe0ffffff
+00000000000i[VGA  ] VBE Bochs Display Extension Enabled
+00000000000i[     ] init_dev of 'unmapped' plugin device by virtual method
+00000000000i[     ] init_dev of 'biosdev' plugin device by virtual method
+00000000000i[     ] init_dev of 'speaker' plugin device by virtual method
+00000000000i[SPEAK] Open /dev/console successfully
+00000000000i[     ] init_dev of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] init_dev of 'iodebug' plugin device by virtual method
+00000000000i[     ] init_dev of 'ioapic' plugin device by virtual method
+00000000000i[IOAP ] initializing I/O APIC
+00000000000i[MEM0 ] Register memory access handlers: 0xfec00000 - 0xfec00fff
+00000000000i[     ] init_dev of 'keyboard' plugin device by virtual method
+00000000000i[KBD  ] will paste characters every 1000 keyboard ticks
+00000000000i[     ] init_dev of 'harddrv' plugin device by virtual method
+00000000000i[HD   ] HD on ata0-0: '30M.sample' 'flat' mode 
+00000000000p[HD   ] >>PANIC<< ata0-0: could not open hard drive image file '30M.sample'
+00000000000p[HD   ] >>PANIC<< ata0-0 image doesn't support geometry detection
+00000000000i[CPU0 ] CPU is in real mode (active)
+00000000000i[CPU0 ] CS.d_b = 16 bit
+00000000000i[CPU0 ] SS.d_b = 16 bit
+00000000000i[CPU0 ] | EAX=ffeeddcc  EBX=332211ff  ECX=bbaa9988  EDX=77665544
+00000000000i[CPU0 ] | ESP=eeddccbb  EBP=aa998877  ESI=66554433  EDI=2211ffee
+00000000000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00000000000i[CPU0 ] | SEG selector     base    limit G D
+00000000000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00000000000i[CPU0 ] |  CS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  DS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  SS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  ES:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  FS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] |  GS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00000000000i[CPU0 ] | EIP=00000000 (00000000)
+00000000000i[CPU0 ] | CR0=0x00000000 CR2=0x00000000
+00000000000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
+00000000000i[CTRL ] quit_sim called with exit code 1
