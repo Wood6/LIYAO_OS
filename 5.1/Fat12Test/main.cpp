@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QByteArray>
 
+// 1字节对齐，没有内存空隙
 #pragma pack(push)
 #pragma pack(1)
 
@@ -188,6 +189,96 @@ void PrintRootEntry(Fat12Header& rf, QString p)
     }
 }
 
+// Fat表：数据组织核心，记录文件数据的先后关系
+// 读Fat表
+QVector<ushort> ReadFat(Fat12Header& rf, QString p)
+{
+    QFile file(p);
+    // BPB_BytsPerSec表示每扇区字节数，Fat表占9个扇区
+    int size = rf.BPB_BytsPerSec * 9;
+    uchar* fat = new uchar[size];
+    // 每个fat表项用12比特，1.5字节，这里设计用2个字节的ushort容纳1个Fat表项足够
+    // size * 2 / 3实际为 size / 1.5，为多少个Fat表项，这里初始化数组，每位初始化值为1
+    QVector<ushort> ret(size * 2 / 3, 0xFFFF);
+
+    // 打开Fat表
+    if( file.open(QIODevice::ReadOnly) )
+    {
+        // 数据流
+        QDataStream in(&file);
+
+        // 定位
+        file.seek(rf.BPB_BytsPerSec * 1);
+
+        in.readRawData(reinterpret_cast<char*>(fat), size);
+
+        // 每3个字节是两个Fat表项，i表示字节数，j表示Fat表项标号
+        for(int i=0, j=0; i<size; i+=3, j+=2)
+        {
+            ret[j] = static_cast<ushort>((fat[i+1] & 0x0F) << 8) | fat[i];
+            ret[j+1] = static_cast<ushort>(fat[i+2] << 4) | ((fat[i+1] >> 4) & 0x0F);
+        }
+    }
+
+    file.close();
+
+    delete[] fat;
+
+    return ret;
+}
+
+// 输出文件名为fn的文件内容
+// fn文件名，p软盘路径
+QByteArray ReadFileContent(Fat12Header& rf, QString p, QString fn)
+{
+    QByteArray ret;
+    RootEntry re = FindRootEntry(rf, p, fn);     // 读到了名为fn的文件目录项
+
+    if( re.DIR_Name[0] != '\0' )
+    {
+        //
+        QVector<ushort> vec = ReadFat(rf, p);
+        QFile file(p);
+
+        if( file.open(QIODevice::ReadOnly) )
+        {
+            // 一簇 512 字节
+            char buf[512] = {0};
+            QDataStream in(&file);
+            int count = 0;
+
+            // DIR_FileSize表示文件大小
+            ret.resize(re.DIR_FileSize);
+
+            // DIR_FstClus文件开始的簇号，Fat表项值为0xFF7说明文件损坏，Fat表项最后若大于0xFF8说明已经到达最后一个簇
+            for(int i=0, j=re.DIR_FstClus; j<0xFF7; i+=512, j=vec[j])
+            {
+                // BPB_BytsPerSec扇区字节数，33文件数据区偏移扇区，Fat表前面有2个表项规定不使用所以文件数据区没有0和1直接从2标号开始
+                // 将文件指针定位到Fat表项指示的簇
+                file.seek(rf.BPB_BytsPerSec * (33 + j - 2));
+
+                // 再从这个文件指针处开始读一簇的数到buf中
+                in.readRawData(buf, sizeof(buf));
+
+                // 将读到的数据放到ret中
+                for(uint k=0; k<sizeof(buf); k++)
+                {
+                    // 读到的数据大小还小于文件大小，还没读完
+                    if( count < ret.size() )
+                    {
+                        ret[i+k] = buf[k];
+                        count++;
+                    }
+                }
+            }
+        }
+
+        file.close();
+    }
+
+    return ret;
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -208,9 +299,21 @@ int main(int argc, char *argv[])
 
     qDebug() << endl;
 
+    qDebug() << "Print File Content:";
+
+    // 输出指定文件的内容 loader.bin
+    QString content = QString(ReadFileContent(f12, img, "LOADER.BIN"));
+
+    qDebug() << content;
+
+    qDebug() << endl;
+    // 输出指定文件的内容 写一个不存在的文件名
+    content = QString(ReadFileContent(f12, img, "aaaa.BIN"));
+    qDebug() << content;
+
     return a.exec();
 }
-/* 运行结果：
+/*运行结果：
 Read Header:
 BS_OEMName:  FreeDOS
 BPB_BytsPerSec:  200
@@ -264,4 +367,11 @@ DIR_WrtDate:  4e39
 DIR_WrtTime:  7b7b
 DIR_FstClus:  4
 DIR_FileSize:  1ed
+
+
+"Liyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\n\n"
+"Liyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\nLiyao test!\n\n"
+
+
+""
 */
